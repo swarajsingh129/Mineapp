@@ -20,7 +20,7 @@ class _SplashscreenState extends State<Splashscreen> {
     super.initState();
     Timer(
         Duration(seconds: 2),
-        () => Navigator.push(
+        () => Navigator.pushReplacement(
             context,
             PageTransition(
                 type: PageTransitionType.rightToLeft, child: landingpage())));
