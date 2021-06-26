@@ -36,8 +36,20 @@ class Authentication with ChangeNotifier {
   }
 
   Future createAccuount(String email, String password) async {
-    UserCredential userCredential = await firebaseAuth
-        .createUserWithEmailAndPassword(email: email, password: password);
+    UserCredential userCredential;
+
+    try {
+      userCredential = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
 
     User user = userCredential.user;
     userUid = user.uid;

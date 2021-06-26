@@ -206,6 +206,8 @@ class LandingService with ChangeNotifier {
                               PageTransition(
                                   child: Homepage(),
                                   type: PageTransitionType.rightToLeft));
+                          emailController.clear();
+                          passwordController.clear();
                         });
                       } else {
                         warningText(context, "Fill all blanks");
@@ -334,6 +336,9 @@ class LandingService with ChangeNotifier {
                                 PageTransition(
                                     child: Homepage(),
                                     type: PageTransitionType.rightToLeft));
+                            emailController.clear();
+                            usernameController.clear();
+                            passwordController.clear();
                           });
                         } else {
                           warningText(context, "Fill all blanks");

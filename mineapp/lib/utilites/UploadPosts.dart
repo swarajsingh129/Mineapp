@@ -191,7 +191,7 @@ class UploadPosts with ChangeNotifier {
         context: context,
         builder: (context) {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.77,
+            height: MediaQuery.of(context).size.height * 0.7,
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
@@ -251,7 +251,9 @@ class UploadPosts with ChangeNotifier {
                         color: constantColors.blueColor,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
+                        padding: EdgeInsets.only(
+                          left: 8.0,
+                        ),
                         child: Container(
                           height: 120,
                           width: 330,
@@ -299,6 +301,7 @@ class UploadPosts with ChangeNotifier {
                       "time": Timestamp.now(),
                       "Postdata": uploadPostImageUrl
                     }).whenComplete(() {
+                      captionController.clear();
                       Navigator.pop(context);
                       print("post uploaded... . .. . .");
                     });

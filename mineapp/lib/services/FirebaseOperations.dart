@@ -61,4 +61,15 @@ class FirebaseOperations with ChangeNotifier {
   Future uploadPostData(String postId, Map<String, dynamic> data) async {
     return FirebaseFirestore.instance.collection("posts").doc(postId).set(data);
   }
+
+  Future deletePostData(String postId) async {
+    return FirebaseFirestore.instance.collection("posts").doc(postId).delete();
+  }
+
+  Future updateCaption(String docId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(docId)
+        .update(data);
+  }
 }
