@@ -4,8 +4,7 @@ import 'package:mineapp/constants/Constantcolors.dart';
 import 'package:mineapp/screens/Chatroom/chatroom.dart';
 import 'package:mineapp/screens/Feed/Feed.dart';
 import 'package:mineapp/screens/Homepage/HomePageHelpers.dart';
-import 'package:mineapp/screens/Landingpage/landinghelper.dart';
-import 'package:mineapp/screens/Landingpage/landingpage.dart';
+
 import 'package:mineapp/screens/Profile/profile.dart';
 import 'package:mineapp/services/Authentication.dart';
 import 'package:mineapp/services/FirebaseOperations.dart';

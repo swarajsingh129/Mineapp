@@ -80,7 +80,7 @@ class Profile extends StatelessWidget {
                       Provider.of<ProfileHelpers>(context, listen: false)
                           .middileprofile(context, snapshot.data),
                       Provider.of<ProfileHelpers>(context, listen: false)
-                          .footerProfile(context),
+                          .footerProfile(context, snapshot.data.id),
                     ],
                   );
                 }

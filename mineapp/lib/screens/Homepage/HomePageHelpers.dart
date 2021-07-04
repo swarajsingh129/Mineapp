@@ -19,7 +19,7 @@ class HomePageHelpers with ChangeNotifier {
         unSelectedColor: constantColors.whiteColor,
         strokeColor: constantColors.blueColor,
         scaleFactor: 0.5,
-        iconSize: 34,
+        iconSize: 30,
         onTap: (value) {
           index = value;
           pageController.jumpToPage(value);

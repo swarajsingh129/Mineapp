@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -198,8 +196,8 @@ class LandingService with ChangeNotifier {
                       if (passwordController.text.isNotEmpty &&
                           emailController.text.isNotEmpty) {
                         Provider.of<Authentication>(context, listen: false)
-                            .LogIntoAccount(
-                                emailController.text, passwordController.text)
+                            .LogIntoAccount(context, emailController.text,
+                                passwordController.text)
                             .whenComplete(() {
                           Navigator.pushReplacement(
                               context,
@@ -331,11 +329,13 @@ class LandingService with ChangeNotifier {
                                   .getUserAvatarUrl
                             });
                           }).whenComplete(() {
+                            Navigator.pop(context);
                             Navigator.pushReplacement(
                                 context,
                                 PageTransition(
                                     child: Homepage(),
                                     type: PageTransitionType.rightToLeft));
+
                             emailController.clear();
                             usernameController.clear();
                             passwordController.clear();

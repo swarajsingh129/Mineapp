@@ -58,8 +58,23 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future uploadPostData(String postId, Map<String, dynamic> data) async {
-    return FirebaseFirestore.instance.collection("posts").doc(postId).set(data);
+  Future uploadPostData(Map<String, dynamic> data1, Map<String, dynamic> data2,
+      String userUid) async {
+    FirebaseFirestore.instance
+        .collection("posts")
+        .add(data1)
+        .whenComplete(() {})
+        .then((value) async {
+      print("asasasasaasasas    " + value.id);
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(userUid)
+          .collection("posts")
+          .doc(value.id)
+          .set(data2);
+    }).whenComplete(() {
+      return print(" post uploaded    dfsdfdfd dfdfdf df dfd");
+    });
   }
 
   Future deletePostData(String postId) async {
@@ -71,5 +86,41 @@ class FirebaseOperations with ChangeNotifier {
         .collection("posts")
         .doc(docId)
         .update(data);
+  }
+
+  Future followUser(String followingUserUid, dynamic followingData,
+      String followerUserUid, dynamic followerData) async {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(followingUserUid)
+        .collection("follower")
+        .doc(followerUserUid)
+        .set(followingData)
+        .whenComplete(() async {
+      return FirebaseFirestore.instance
+          .collection("users")
+          .doc(followerUserUid)
+          .collection("following")
+          .doc(followingUserUid)
+          .set(followerData);
+    });
+  }
+
+  Future unfollowUser(
+      String unFollowingUserUid, String unFollowerUserUid) async {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(unFollowingUserUid)
+        .collection("follower")
+        .doc(unFollowerUserUid)
+        .delete()
+        .whenComplete(() {
+      return FirebaseFirestore.instance
+          .collection("users")
+          .doc(unFollowerUserUid)
+          .collection("following")
+          .doc(unFollowingUserUid)
+          .delete();
+    });
   }
 }

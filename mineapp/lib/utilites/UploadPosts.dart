@@ -45,9 +45,9 @@ class UploadPosts with ChangeNotifier {
         .ref()
         .child("posts/${uploadPostImage.path}/${TimeOfDay.now()}");
     imagePostUploadTask = imageReference.putFile(uploadPostImage);
-    await imagePostUploadTask.whenComplete(() {
+    await imagePostUploadTask.whenComplete(() async {
       print("Post Image Uploaded");
-      imageReference.getDownloadURL().then((imgUrl) {
+      await imageReference.getDownloadURL().then((imgUrl) {
         uploadPostImageUrl = imgUrl;
         print("upload post url -- " + uploadPostImageUrl);
         notifyListeners();
@@ -164,10 +164,8 @@ class UploadPosts with ChangeNotifier {
                     ),
                     MaterialButton(
                       onPressed: () {
-                        uploadPostImageToFirebase().whenComplete(() {
-                          Navigator.pop(context);
-                          editPostSheet(context);
-                        });
+                        Navigator.pop(context);
+                        editPostSheet(context);
                       },
                       color: constantColors.blueColor,
                       child: Text(
@@ -189,137 +187,192 @@ class UploadPosts with ChangeNotifier {
   editPostSheet(BuildContext context) {
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 150),
-                  child: Divider(
-                    thickness: 4,
-                    color: constantColors.whiteColor,
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.57,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 150),
+                    child: Divider(
+                      thickness: 4,
+                      color: constantColors.whiteColor,
+                    ),
                   ),
-                ),
-                Container(
-                  child: Row(
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.image_aspect_ratio,
-                                  color: constantColors.greenColor,
-                                )),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.fit_screen_outlined,
-                                  color: constantColors.yellowColor,
-                                ))
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 250, //MediaQuery.of(context).size.height * 0.4,
-                        width: 280,
-                        //height: MediaQuery.of(context).size.height * 0.4,
-                        // width: MediaQuery.of(context).size.width * 65,
-                        child: Image.file(
-                          uploadPostImage,
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: Image.asset("assets/icons/sunflower.png"),
-                      ),
-                      Container(
-                        height: 110,
-                        width: 5.0,
-                        color: constantColors.blueColor,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 8.0,
-                        ),
-                        child: Container(
-                          height: 120,
-                          width: 330,
-                          child: TextField(
-                            controller: captionController,
-                            maxLines: 5,
-                            textCapitalization: TextCapitalization.words,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(100)
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Column(
+                            children: [
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.image_aspect_ratio,
+                                    color: constantColors.greenColor,
+                                  )),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.fit_screen_outlined,
+                                    color: constantColors.yellowColor,
+                                  ))
                             ],
-                            maxLength: 100,
-                            style: TextStyle(
-                                color: constantColors.whiteColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(
-                                hintText: "Add a Caption....",
-                                hintStyle: TextStyle(
-                                    color: constantColors.whiteColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold)),
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          height:
+                              250, //MediaQuery.of(context).size.height * 0.4,
+                          width: 280,
+                          //height: MediaQuery.of(context).size.height * 0.4,
+                          // width: MediaQuery.of(context).size.width * 65,
+                          child: Image.file(
+                            uploadPostImage,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                MaterialButton(
-                  onPressed: () {
-                    Provider.of<FirebaseOperations>(context, listen: false)
-                        .uploadPostData(captionController.text, {
-                      "caption": captionController.text,
-                      "userName": Provider.of<FirebaseOperations>(context,
-                              listen: false)
-                          .initUserName,
-                      "userEmail": Provider.of<FirebaseOperations>(context,
-                              listen: false)
-                          .initUserEmail,
-                      "userUid":
-                          Provider.of<Authentication>(context, listen: false)
-                              .getUserUid,
-                      "userImage": Provider.of<FirebaseOperations>(context,
-                              listen: false)
-                          .initUserImage,
-                      "time": Timestamp.now(),
-                      "Postdata": uploadPostImageUrl
-                    }).whenComplete(() {
-                      captionController.clear();
-                      Navigator.pop(context);
-                      print("post uploaded... . .. . .");
-                    });
-                  },
-                  child: Text(
-                    "Share",
-                    style: TextStyle(
-                        color: constantColors.whiteColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: Image.asset("assets/icons/sunflower.png"),
+                        ),
+                        Container(
+                          height: 110,
+                          width: 5.0,
+                          color: constantColors.blueColor,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 8.0,
+                          ),
+                          child: Container(
+                            height: 120,
+                            width: 330,
+                            child: TextField(
+                              controller: captionController,
+                              maxLines: 5,
+                              textCapitalization: TextCapitalization.words,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(100)
+                              ],
+                              maxLength: 100,
+                              style: TextStyle(
+                                  color: constantColors.whiteColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                              decoration: InputDecoration(
+                                  hintText: "Add a Caption....",
+                                  hintStyle: TextStyle(
+                                      color: constantColors.whiteColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  color: constantColors.blueColor,
-                )
-              ],
-            ),
-            decoration: BoxDecoration(
-              color: constantColors.blueGreyColor,
-              borderRadius: BorderRadius.circular(12),
+                  MaterialButton(
+                    onPressed: () {
+                      Center(
+                        child: CircularProgressIndicator(),
+                      );
+                      uploadPostImageToFirebase().whenComplete(() async {
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .uploadPostData(
+                                {
+                              "caption": captionController.text,
+                              "userName": Provider.of<FirebaseOperations>(
+                                      context,
+                                      listen: false)
+                                  .initUserName,
+                              "userEmail": Provider.of<FirebaseOperations>(
+                                      context,
+                                      listen: false)
+                                  .initUserEmail,
+                              "userUid": Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserUid,
+                              "userImage": Provider.of<FirebaseOperations>(
+                                      context,
+                                      listen: false)
+                                  .initUserImage,
+                              "time": Timestamp.now(),
+                              "Postdata": uploadPostImageUrl
+                            },
+                                {
+                              "userUid": Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserUid,
+                              "Postdata": uploadPostImageUrl,
+                              "time": Timestamp.now(),
+                            },
+                                Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .getUserUid) /*.whenComplete(() async {
+                          return FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(
+                                Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .getUserUid,
+                              )
+                              .collection("posts")
+                              .doc("")
+                              .set({
+                            "caption": captionController.text,
+                            "userName": Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .initUserName,
+                            "userEmail": Provider.of<FirebaseOperations>(
+                                    context,
+                                    listen: false)
+                                .initUserEmail,
+                            "userUid": Provider.of<Authentication>(context,
+                                    listen: false)
+                                .getUserUid,
+                            "userImage": Provider.of<FirebaseOperations>(
+                                    context,
+                                    listen: false)
+                                .initUserImage,
+                            "time": Timestamp.now(),
+                            "Postdata": uploadPostImageUrl
+                          });
+                        }).*/
+                            .whenComplete(() {
+                          captionController.clear();
+                          Navigator.pop(context);
+                          print("post uploaded... . .. . .");
+                        });
+                      });
+                    },
+                    child: Text(
+                      "Share",
+                      style: TextStyle(
+                          color: constantColors.whiteColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    color: constantColors.blueColor,
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: constantColors.blueGreyColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         });

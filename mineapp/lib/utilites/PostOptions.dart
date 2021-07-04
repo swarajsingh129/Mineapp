@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mineapp/constants/Constantcolors.dart';
+import 'package:mineapp/screens/AltProfile/AltProfile.dart';
 import 'package:mineapp/services/Authentication.dart';
 import 'package:mineapp/services/FirebaseOperations.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -41,7 +43,19 @@ class PostFunctions with ChangeNotifier {
     });
   }
 
-  showPostOptions(BuildContext context, String docId) {
+  Future removeLike(String postId, String subDocId) {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postId)
+        .collection("likes")
+        .doc(subDocId)
+        .delete()
+        .whenComplete(() {
+      notifyListeners();
+    });
+  }
+
+  showPostOptions(BuildContext context, String docId, String oldcap) {
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -72,7 +86,7 @@ class PostFunctions with ChangeNotifier {
                         onPressed: () {
                           Navigator.pop(context);
                           TextEditingController recaptionController =
-                              new TextEditingController(text: docId);
+                              new TextEditingController(text: oldcap);
                           showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
@@ -213,6 +227,7 @@ class PostFunctions with ChangeNotifier {
                                             .deletePostData(docId)
                                             .whenComplete(() {
                                           Navigator.pop(context);
+                                          Navigator.pop(context);
                                         });
                                       },
                                       color: constantColors.redColor,
@@ -335,6 +350,26 @@ class PostFunctions with ChangeNotifier {
                                           Padding(
                                             padding: EdgeInsets.only(left: 8),
                                             child: GestureDetector(
+                                              onTap: () {
+                                                if (documentSnapshot
+                                                        .data()["userUid"] !=
+                                                    Provider.of<Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid) {
+                                                  Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                          child: AltProfile(
+                                                              userUid:
+                                                                  documentSnapshot
+                                                                          .data()[
+                                                                      "userUid"]),
+                                                          type:
+                                                              PageTransitionType
+                                                                  .rightToLeft));
+                                                }
+                                              },
                                               child: CircleAvatar(
                                                 backgroundColor:
                                                     constantColors.transperant,
@@ -347,15 +382,38 @@ class PostFunctions with ChangeNotifier {
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 left: 8.0),
-                                            child: Container(
-                                              child: Text(
-                                                documentSnapshot
-                                                    .data()["username"],
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: constantColors
-                                                        .whiteColor,
-                                                    fontSize: 16.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                if (documentSnapshot
+                                                        .data()["userUid"] !=
+                                                    Provider.of<Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid) {
+                                                  Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                          child: AltProfile(
+                                                              userUid:
+                                                                  documentSnapshot
+                                                                          .data()[
+                                                                      "userUid"]),
+                                                          type:
+                                                              PageTransitionType
+                                                                  .rightToLeft));
+                                                }
+                                              },
+                                              child: Container(
+                                                child: Text(
+                                                  documentSnapshot
+                                                      .data()["username"],
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: constantColors
+                                                          .whiteColor,
+                                                      fontSize: 16.0),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -363,13 +421,14 @@ class PostFunctions with ChangeNotifier {
                                             child: Row(
                                               children: [
                                                 IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(
-                                                      FontAwesomeIcons.arrowUp,
-                                                      color: constantColors
-                                                          .yellowColor,
-                                                      size: 13,
-                                                    )),
+                                                  onPressed: () {},
+                                                  icon: Icon(
+                                                    FontAwesomeIcons.arrowUp,
+                                                    color: constantColors
+                                                        .yellowColor,
+                                                    size: 13,
+                                                  ),
+                                                ),
                                                 Text(
                                                   "0",
                                                   style: TextStyle(
@@ -468,7 +527,7 @@ class PostFunctions with ChangeNotifier {
                         FloatingActionButton(
                           onPressed: () {
                             print("add commnets");
-                            addComment(context, snapshot.data()["caption"],
+                            addComment(context, snapshot.id,
                                     commentController.text)
                                 .whenComplete(() {
                               commentController.clear();
@@ -550,16 +609,50 @@ class PostFunctions with ChangeNotifier {
                                 documentsnapshot) {
                           print("doc s  " + documentsnapshot.data().toString());
                           return ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: constantColors.transperant,
-                              backgroundImage: NetworkImage(
-                                  documentsnapshot.data()["userImage"]),
+                            leading: GestureDetector(
+                              onTap: () {
+                                if (documentsnapshot.data()["userUid"] !=
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid) {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          child: AltProfile(
+                                              userUid: documentsnapshot
+                                                  .data()["userUid"]),
+                                          type:
+                                              PageTransitionType.rightToLeft));
+                                }
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: constantColors.transperant,
+                                backgroundImage: NetworkImage(
+                                    documentsnapshot.data()["userImage"]),
+                              ),
                             ),
-                            title: Text(documentsnapshot.data()["username"],
-                                style: TextStyle(
-                                    color: constantColors.whiteColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
+                            title: GestureDetector(
+                              onTap: () {
+                                if (documentsnapshot.data()["userUid"] !=
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid) {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          child: AltProfile(
+                                              userUid: documentsnapshot
+                                                  .data()["userUid"]),
+                                          type:
+                                              PageTransitionType.rightToLeft));
+                                }
+                              },
+                              child: Text(documentsnapshot.data()["username"],
+                                  style: TextStyle(
+                                      color: constantColors.whiteColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                            ),
                             trailing: (documentsnapshot.data()["userUid"] ==
                                     Provider.of<Authentication>(context,
                                             listen: false)
