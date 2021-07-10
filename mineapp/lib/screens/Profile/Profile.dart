@@ -58,7 +58,10 @@ class Profile extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height,
+            constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+                maxHeight: double.infinity),
+            // height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
@@ -87,8 +90,12 @@ class Profile extends StatelessWidget {
               },
             ),
             decoration: BoxDecoration(
-                color: constantColors.blueGreyColor.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(15)),
+              color: constantColors.blueGreyColor.withOpacity(0.6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
           ),
         ),
       ),

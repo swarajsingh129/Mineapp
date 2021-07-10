@@ -23,7 +23,6 @@ class HomePageHelpers with ChangeNotifier {
         onTap: (value) {
           index = value;
           pageController.jumpToPage(value);
-          notifyListeners();
         },
         backgroundColor: Colors.black38,
         items: [

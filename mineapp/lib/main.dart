@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mineapp/screens/AltProfile/altProfileHelper.dart';
+import 'package:mineapp/screens/Chatroom/ChatPageHelpers.dart';
 import 'package:mineapp/screens/Chatroom/ChatroomHelpers.dart';
 import 'package:mineapp/screens/Feed/FeedHelpers.dart';
 import 'package:mineapp/screens/Homepage/HomePageHelpers.dart';
@@ -14,7 +15,6 @@ import 'package:mineapp/services/FirebaseOperations.dart';
 import 'package:mineapp/utilites/PostOptions.dart';
 import 'package:mineapp/utilites/UploadPosts.dart';
 import 'package:provider/provider.dart';
-
 import 'constants/Constantcolors.dart';
 
 void main() async {
@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
               canvasColor: Colors.transparent),
         ),
         providers: [
+          ChangeNotifierProvider(create: (_) => ChatPageHelpers()),
           ChangeNotifierProvider(create: (_) => ChatroomHelpers()),
           ChangeNotifierProvider(create: (_) => AltProfileHelper()),
           ChangeNotifierProvider(create: (_) => PostFunctions()),

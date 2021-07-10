@@ -224,7 +224,7 @@ class PostFunctions with ChangeNotifier {
                                       onPressed: () {
                                         Provider.of<FirebaseOperations>(context,
                                                 listen: false)
-                                            .deletePostData(docId)
+                                            .deletePostData(context, docId)
                                             .whenComplete(() {
                                           Navigator.pop(context);
                                           Navigator.pop(context);
@@ -315,189 +315,178 @@ class PostFunctions with ChangeNotifier {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: FirebaseFirestore.instance
-                            .collection("posts")
-                            .doc(docId)
-                            .collection("comments")
-                            .orderBy("time")
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else {
-                            return new ListView(
-                              children: snapshot.data.docs.map(
-                                  (DocumentSnapshot<Map<String, dynamic>>
-                                      documentSnapshot) {
-                                print(documentSnapshot.data().toString());
-                                return Container(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.145,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                  StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    stream: FirebaseFirestore.instance
+                        .collection("posts")
+                        .doc(docId)
+                        .collection("comments")
+                        .orderBy("time")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: snapshot.data.docs.map(
+                              (DocumentSnapshot<Map<String, dynamic>>
+                                  documentSnapshot) {
+                            print(documentSnapshot.data().toString());
+                            return Container(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.145,
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 8),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (documentSnapshot
-                                                        .data()["userUid"] !=
-                                                    Provider.of<Authentication>(
-                                                            context,
-                                                            listen: false)
-                                                        .getUserUid) {
-                                                  Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                          child: AltProfile(
-                                                              userUid:
-                                                                  documentSnapshot
-                                                                          .data()[
-                                                                      "userUid"]),
-                                                          type:
-                                                              PageTransitionType
-                                                                  .rightToLeft));
-                                                }
-                                              },
-                                              child: CircleAvatar(
-                                                backgroundColor:
-                                                    constantColors.transperant,
-                                                backgroundImage: NetworkImage(
-                                                    documentSnapshot
-                                                        .data()["userImage"]),
-                                              ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 8),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (documentSnapshot
+                                                    .data()["userUid"] !=
+                                                Provider.of<Authentication>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserUid) {
+                                              Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                      child: AltProfile(
+                                                          userUid:
+                                                              documentSnapshot
+                                                                      .data()[
+                                                                  "userUid"]),
+                                                      type: PageTransitionType
+                                                          .rightToLeft));
+                                            }
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundColor:
+                                                constantColors.transperant,
+                                            backgroundImage: NetworkImage(
+                                                documentSnapshot
+                                                    .data()["userImage"]),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (documentSnapshot
+                                                    .data()["userUid"] !=
+                                                Provider.of<Authentication>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserUid) {
+                                              Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                      child: AltProfile(
+                                                          userUid:
+                                                              documentSnapshot
+                                                                      .data()[
+                                                                  "userUid"]),
+                                                      type: PageTransitionType
+                                                          .rightToLeft));
+                                            }
+                                          },
+                                          child: Container(
+                                            child: Text(
+                                              documentSnapshot
+                                                  .data()["username"],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      constantColors.whiteColor,
+                                                  fontSize: 16.0),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (documentSnapshot
-                                                        .data()["userUid"] !=
-                                                    Provider.of<Authentication>(
-                                                            context,
-                                                            listen: false)
-                                                        .getUserUid) {
-                                                  Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                          child: AltProfile(
-                                                              userUid:
-                                                                  documentSnapshot
-                                                                          .data()[
-                                                                      "userUid"]),
-                                                          type:
-                                                              PageTransitionType
-                                                                  .rightToLeft));
-                                                }
-                                              },
-                                              child: Container(
-                                                child: Text(
-                                                  documentSnapshot
-                                                      .data()["username"],
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: constantColors
-                                                          .whiteColor,
-                                                      fontSize: 16.0),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Row(
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {},
-                                                  icon: Icon(
-                                                    FontAwesomeIcons.arrowUp,
-                                                    color: constantColors
-                                                        .yellowColor,
-                                                    size: 13,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "0",
-                                                  style: TextStyle(
-                                                      color: constantColors
-                                                          .whiteColor,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(
-                                                        FontAwesomeIcons.reply,
-                                                        color: constantColors
-                                                            .greenColor,
-                                                        size: 13)),
-                                              ],
-                                            ),
-                                          )
-                                        ],
+                                        ),
                                       ),
                                       Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
                                         child: Row(
                                           children: [
                                             IconButton(
                                               onPressed: () {},
                                               icon: Icon(
-                                                Icons
-                                                    .arrow_forward_ios_outlined,
-                                                color: constantColors.blueColor,
-                                                size: 12,
+                                                FontAwesomeIcons.arrowUp,
+                                                color:
+                                                    constantColors.yellowColor,
+                                                size: 13,
                                               ),
                                             ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.75,
-                                              child: Text(
-                                                documentSnapshot
-                                                    .data()["comment"],
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: constantColors
-                                                        .whiteColor),
-                                              ),
+                                            Text(
+                                              "0",
+                                              style: TextStyle(
+                                                  color:
+                                                      constantColors.whiteColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             IconButton(
                                                 onPressed: () {},
                                                 icon: Icon(
-                                                    FontAwesomeIcons.trashAlt,
-                                                    color:
-                                                        constantColors.redColor,
-                                                    size: 15)),
+                                                    FontAwesomeIcons.reply,
+                                                    color: constantColors
+                                                        .greenColor,
+                                                    size: 13)),
                                           ],
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
-                                );
-                              }).toList(),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            Icons.arrow_forward_ios_outlined,
+                                            color: constantColors.blueColor,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.75,
+                                          child: Text(
+                                            documentSnapshot.data()["comment"],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color:
+                                                    constantColors.whiteColor),
+                                          ),
+                                        ),
+                                        IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                                FontAwesomeIcons.trashAlt,
+                                                color: constantColors.redColor,
+                                                size: 15)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
-                          }
-                        },
-                      ),
-                    ),
+                          }).toList(),
+                        );
+                      }
+                    },
                   ),
+                  Spacer(),
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: 50,
@@ -588,10 +577,7 @@ class PostFunctions with ChangeNotifier {
                     ),
                   ),
                 ),
-                Container(
-                    child: Expanded(
-                        child:
-                            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   stream: FirebaseFirestore.instance
                       .collection("posts")
                       .doc(docId)
@@ -604,6 +590,8 @@ class PostFunctions with ChangeNotifier {
                       );
                     } else {
                       return new ListView(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         children: snapshot.data.docs.map(
                             (DocumentSnapshot<Map<String, dynamic>>
                                 documentsnapshot) {
@@ -674,7 +662,7 @@ class PostFunctions with ChangeNotifier {
                       );
                     }
                   },
-                )))
+                )
               ],
             ),
             decoration: BoxDecoration(

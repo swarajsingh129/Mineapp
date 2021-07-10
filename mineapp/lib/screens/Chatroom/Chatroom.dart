@@ -2,6 +2,8 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mineapp/constants/Constantcolors.dart';
+import 'package:mineapp/screens/Chatroom/ChatroomHelpers.dart';
+import 'package:provider/provider.dart';
 
 class Chatroom extends StatelessWidget {
   ConstantColors constantColors = ConstantColors();
@@ -16,7 +18,10 @@ class Chatroom extends StatelessWidget {
             FontAwesomeIcons.plus,
             color: constantColors.greenColor,
           ),
-          onPressed: null,
+          onPressed: () {
+            Provider.of<ChatroomHelpers>(context, listen: false)
+                .showCreateChatRoomSheet(context);
+          },
         ),
         actions: [
           IconButton(
@@ -54,7 +59,8 @@ class Chatroom extends StatelessWidget {
         backgroundColor: constantColors.blueGreyColor,
       ),*/
       body: Center(
-        child: Text("Chatroom"),
+        child: Provider.of<ChatroomHelpers>(context, listen: false)
+            .allmessages(context),
       ),
     );
   }

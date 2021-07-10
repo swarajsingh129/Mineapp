@@ -16,7 +16,10 @@ class AltProfile extends StatelessWidget {
           Provider.of<AltProfileHelper>(context, listen: false).appBar(context),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+              maxHeight: double.infinity),
+          // height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
@@ -30,8 +33,6 @@ class AltProfile extends StatelessWidget {
                 );
               } else {
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Provider.of<AltProfileHelper>(context, listen: false)
                         .headerProfile(context, snapshot.data, userUid),
@@ -40,7 +41,7 @@ class AltProfile extends StatelessWidget {
                     Provider.of<AltProfileHelper>(context, listen: false)
                         .middileprofile(context, snapshot.data),
                     Provider.of<AltProfileHelper>(context, listen: false)
-                        .footerProfile(context),
+                        .footerProfile(context, userUid),
                   ],
                 );
               }

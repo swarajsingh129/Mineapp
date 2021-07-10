@@ -3,7 +3,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
+
 import 'package:mineapp/constants/Constantcolors.dart';
 import 'package:mineapp/screens/AltProfile/AltProfile.dart';
 import 'package:mineapp/services/Authentication.dart';
@@ -69,7 +69,7 @@ class FeedHelpers with ChangeNotifier {
               }
             },
           ),
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.8,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: constantColors.darkColor,
@@ -215,7 +215,7 @@ class FeedHelpers with ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: 60,
+                        width: 75,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -287,8 +287,16 @@ class FeedHelpers with ChangeNotifier {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(
-                                        child: CircularProgressIndicator());
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        "-",
+                                        style: TextStyle(
+                                            color: constantColors.whiteColor
+                                                .withOpacity(0.6),
+                                            fontSize: 18),
+                                      ),
+                                    );
                                   } else {
                                     return GestureDetector(
                                       onTap: () {
@@ -315,7 +323,7 @@ class FeedHelpers with ChangeNotifier {
                         ),
                       ),
                       Container(
-                        width: 60,
+                        width: 75,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -342,8 +350,16 @@ class FeedHelpers with ChangeNotifier {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(
-                                        child: CircularProgressIndicator());
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        "-",
+                                        style: TextStyle(
+                                            color: constantColors.whiteColor
+                                                .withOpacity(0.6),
+                                            fontSize: 18),
+                                      ),
+                                    );
                                   } else {
                                     return Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
@@ -373,6 +389,16 @@ class FeedHelpers with ChangeNotifier {
                                 size: 22,
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                "",
+                                style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
+                            )
                           ],
                         ),
                       ),

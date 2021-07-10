@@ -88,7 +88,7 @@ class ShowPost extends StatelessWidget {
   showpostdata(BuildContext context,
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     return Padding(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -208,29 +208,68 @@ class ShowPost extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: 60,
+                    width: 75,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Provider.of<PostFunctions>(context, listen: false)
-                                .addLike(
-                                    context,
-                                    documentSnapshot.id,
-                                    Provider.of<Authentication>(context,
-                                            listen: false)
-                                        .getUserUid)
-                                .whenComplete(() {
-                              print("liked post");
-                            });
-                          },
-                          child: Icon(
-                            FontAwesomeIcons.heart,
-                            color: constantColors.redColor,
-                            size: 22,
-                          ),
-                        ),
+                        StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                            stream: FirebaseFirestore.instance
+                                .collection("posts")
+                                .doc(documentSnapshot.id)
+                                .collection("likes")
+                                .doc(Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .getUserUid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else {
+                                if (snapshot.data.exists) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Provider.of<PostFunctions>(context,
+                                              listen: false)
+                                          .removeLike(
+                                              documentSnapshot.id,
+                                              Provider.of<Authentication>(
+                                                      context,
+                                                      listen: false)
+                                                  .getUserUid);
+                                    },
+                                    child: Icon(
+                                      FontAwesomeIcons.solidHeart,
+                                      color: constantColors.redColor,
+                                      size: 22,
+                                    ),
+                                  );
+                                } else {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Provider.of<PostFunctions>(context,
+                                              listen: false)
+                                          .addLike(
+                                              context,
+                                              documentSnapshot.id,
+                                              Provider.of<Authentication>(
+                                                      context,
+                                                      listen: false)
+                                                  .getUserUid)
+                                          .whenComplete(() {
+                                        print("liked post");
+                                      });
+                                    },
+                                    child: Icon(
+                                      FontAwesomeIcons.heart,
+                                      color: constantColors.redColor,
+                                      size: 22,
+                                    ),
+                                  );
+                                }
+                              }
+                            }),
                         StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                             stream: FirebaseFirestore.instance
                                 .collection("posts")
@@ -267,7 +306,7 @@ class ShowPost extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 60,
+                    width: 75,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -323,6 +362,16 @@ class ShowPost extends StatelessWidget {
                             size: 22,
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            "",
+                            style: TextStyle(
+                                color: constantColors.whiteColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                        )
                       ],
                     ),
                   ),
